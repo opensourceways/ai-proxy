@@ -5,9 +5,9 @@ BASE_IMAGE=vllm-npu:latest
 MODEL1=Qwen2.5-32B-Instruct
 MODEL2=Qwen2.5-14B-Instruct
 MODEL3=bge-large-en-v1.5
-COMMAND1="python3 -m vllm.entrypoints.openai.api_server  -tp 4 --model /workspace/model/${MODEL1} --served-model-name ${MODEL1}  --port 8008 >> /workspace/api_server.log 2>&1"
-COMMAND2="python3 -m vllm.entrypoints.openai.api_server  -tp 2 --model /workspace/model/${MODEL2} --served-model-name ${MODEL2}  --port 8009 >> /workspace/api_server.log 2>&1"
-COMMAND3="cd /workspace/ai-inference;pip install -r requirements.txt;pip install sentence_transformers argparse;cd app/examples;python main.py --model ${MODEL3} --port 8010 >> /workspace/api_server.log 2>&1"
+COMMAND1="python3 -m vllm.entrypoints.openai.api_server  -tp 4 --model /workspace/model/${MODEL1} --served-model-name ${MODEL1}  --port 8008 > /workspace/api_server.log 2>&1"
+COMMAND2="python3 -m vllm.entrypoints.openai.api_server  -tp 2 --model /workspace/model/${MODEL2} --served-model-name ${MODEL2}  --port 8009 > /workspace/api_server.log 2>&1"
+COMMAND3="cd /workspace/ai-inference;pip install -r requirements.txt;pip install sentence_transformers argparse;cd app/examples;python main.py --model ${MODEL3} --port 8010 > /workspace/api_server.log 2>&1"
 RUNNING_CONTAINERS=$(docker ps -a -q)
 
 ## step1 start ai_inference service
