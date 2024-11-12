@@ -1,14 +1,17 @@
 #!/bin/bash
-LOAD_DIR=/dev/data/model:/workspace/model 
-LOAD_AI_INFERENCE=/dev/data/ai-inference:/workspace/ai-inference 
+LOAD_DIR=/data/model:/workspace/model 
+LOAD_AI_INFERENCE=/data/ai-inference:/workspace/ai-inference 
 BASE_IMAGE=vllm-npu:latest
-COMMAND1="python3 -m vllm.entrypoints.openai.api_server  -tp 4 --model /workspace/model/inference/Qwen2.5-32B-Instruct --served-model-name Qwen2.5-32B-Instruct  --port 8008 >> /workspace/api_server.log 2>&1"
-COMMAND2="python3 -m vllm.entrypoints.openai.api_server  -tp 2 --model /workspace/model/inference/Qwen2.5-14B-Instruct --served-model-name Qwen2.5-14B-Instruct  --port 8009 >> /workspace/api_server.log 2>&1"
-COMMAND3="cd /workspace/ai-inference;pip install -r requirements.txt;pip install sentence_transformers;cd app/examples;uvicorn main:app --port 8010 >> /workspace/api_server.log 2>&1"
+MODEL1=Qwen2.5-32B-Instruct
+MODEL2=Qwen2.5-14B-Instruct
+MODEL3=bge-large-en-v1.5
+COMMAND1="python3 -m vllm.entrypoints.openai.api_server  -tp 4 --model /workspace/model/${MODEL1} --served-model-name ${MODEL1}  --port 8008 >> /workspace/api_server.log 2>&1"
+COMMAND2="python3 -m vllm.entrypoints.openai.api_server  -tp 2 --model /workspace/model/${MODEL2} --served-model-name ${MODEL2}  --port 8009 >> /workspace/api_server.log 2>&1"
+COMMAND3="cd /workspace/ai-inference;pip install -r requirements.txt;pip install sentence_transformers argparse;cd app/examples;python main.py --model ${MODEL3} --port 8010 >> /workspace/api_server.log 2>&1"
 RUNNING_CONTAINERS=$(docker ps -a -q)
 
 ## step1 start ai_inference service
-cd /dev/data/ai-inference
+cd /data/ai-inference
 pip install -r requirements.txt
 ps -ef | grep app/main.py | grep -v grep | awk '{print $2}' | xargs kill -9
 nohup python3 app/main.py > ai_inference.log 2>&1 &
