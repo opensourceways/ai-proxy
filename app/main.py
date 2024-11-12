@@ -1,3 +1,4 @@
+import logging
 import uvicorn
 
 from fastapi import FastAPI
@@ -24,4 +25,9 @@ app.include_router(chat.router, prefix="/chat", tags=["chat"], dependencies=[Dep
 app.include_router(embeddings.router, prefix="/embeddings", tags=["embeddings"], dependencies=[Depends(verify_token)])
 
 if __name__ == "__main__":
+    logging.basicConfig(
+        level=logging.DEBUG, 
+        format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+        handlers=[logging.FileHandler("ai_inference.log"), logging.StreamHandler()]
+    )
     uvicorn.run(app, host=settings.HOST, port=settings.PORT)
